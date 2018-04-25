@@ -1,4 +1,6 @@
+dist/
 data/
+uploads/
 html/
 *.pyc
 .vscode/

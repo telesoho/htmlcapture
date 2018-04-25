@@ -6,6 +6,22 @@ import os
 import sys
 import log
 
+import shutil
+
+import zipfile
+
+def unzip_file(zip_file, dest_dir):
+    zip_ref = zipfile.ZipFile(zip_file, 'r')
+    zip_ref.extractall(dest_dir)
+    zip_ref.close()
+
+def zipdir(path, zip_file):
+    zipf = zipfile.ZipFile(zip_file, 'w', zipfile.ZIP_DEFLATED)
+    # ziph is zipfile handle
+    for root, dirs, files in os.walk(path):
+        for file in files:
+            zipf.write(os.path.join(root, file))
+    zipf.close()
 
 def remove_tree(folder):
     try:
@@ -22,11 +38,18 @@ def main():
     base_dir = get_script_path()
     log.init()
     if len(sys.argv) == 3:
-        input_dir = sys.argv[1]
-        output_dir = sys.argv[2]
-    else:
-        input_dir = os.path.join(base_dir, 'data/html')
-        output_dir = os.path.join(base_dir, 'data/result')
+        input_zip = sys.argv[1]
+        output_zip = sys.argv[2]
+
+    input_dir = os.path.join(base_dir, 'data/html')
+    output_dir = os.path.join(base_dir, 'data/result')
+
+    data_path = os.path.join(base_dir, 'data')
+
+    if(os.path.isfile(input_zip)):
+        if(os.path.isdir(input_dir)):
+            shutil.rmtree(input_dir, ignore_errors=True)
+        unzip_file(input_zip, data_path)
 
     input_dir = os.path.abspath(input_dir)
     output_dir= os.path.abspath(output_dir)
@@ -61,6 +84,12 @@ def main():
     log.hclog.info('Crop end %s' % result_dir)
 
     # remove screenshot folder
+    remove_tree(screenshot_folder)
+
+    # zip result to zip
+    zipdir(result_dir, output_zip)
+
+    log.hclog.info('RESULT_FILE:%s' % output_zip)
 
 if __name__ == "__main__":
     try:
