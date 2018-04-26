@@ -34,6 +34,22 @@ def remove_tree(folder):
 def get_script_path():
     return os.path.dirname(os.path.realpath(sys.argv[0]))
 
+
+def copy_dir_struct(src_dir, dest_dir):
+    '''
+    Blur all faces in the source directory photos and copy them to destination directory
+    '''
+    src_dir = os.path.abspath(src_dir)
+    dest_dir = os.path.abspath(dest_dir)
+    for root, subdirs, files in os.walk(src_dir):
+        root_relpath = os.path.relpath(root, src_dir)
+        new_root_path = os.path.realpath(os.path.join(dest_dir, root_relpath))
+        if os.path.isdir(new_root_path):
+            pass
+        else:
+            os.makedirs(new_root_path)
+
+
 def main():
     base_dir = get_script_path()
     log.init()
@@ -60,7 +76,10 @@ def main():
     img_dir = os.path.join(input_dir, 'src/images')
     result_dir = output_dir
     remove_tree(result_dir)
-    diru.copy_tree(img_dir, result_dir)
+    # os.system('cp -a {} {}'.format(img_dir, output_dir))
+    shutil.copytree(img_dir, result_dir)
+    # copy_dir_struct(img_dir, result_dir)
+    # diru.copy_tree(img_dir, result_dir)
 
     # Remove all Material folder from result folder    
     for (dirpath, folders, filenames) in os.walk(result_dir):
@@ -87,7 +106,8 @@ def main():
     remove_tree(screenshot_folder)
 
     # zip result to zip
-    zipdir(result_dir, output_zip)
+    # zipdir(result_dir, output_zip)
+    os.system('zip -r {} {}'.format(output_zip, result_dir))
 
     log.hclog.info('RESULT_FILE:%s' % output_zip)
 
