@@ -4,11 +4,8 @@ from flask_cors import CORS
 from flask import render_template
 from flask import url_for
 from werkzeug.utils import secure_filename
-
 import re
-
 import subprocess
-
 import json
 
             
@@ -24,7 +21,10 @@ ALLOWED_EXTENSIONS = set(['zip', 'txt', 'png', 'jpg', 'jpeg', 'gif'])
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-def getResultFilePath(logStr):
+def get_result_file_path(logStr):
+    '''
+    Parse result file path from log message.
+    '''
     m = re.search(r'RESULT_FILE:(.*)', logStr)
     if m:
         result = m.group(1)
@@ -37,7 +37,10 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-def CheckDone(logfile):
+def check_done(logfile):
+    '''
+    Check all jobs are done or not from log message.
+    '''
     if os.path.isfile(logfile):
         with open(logfile) as f:
             for line in f:
@@ -54,15 +57,6 @@ def index():
     return send_from_directory(os.path.join(web_dir, 'dist'), "index.html")
 
 
-@app.route('/caphtml')
-def caphtml():
-    if CheckDone('htmlcapture.log'):
-        cmd = 'python ../runall.py'
-        subprocess.Popen([cmd], shell=True)
-        return 'Job start'
-    else:
-        return 'prev Job are still running, please wait a moment.'
-
 @app.route('/GetLog')
 def GetLog():
     logfile = 'htmlcapture.log'
@@ -74,7 +68,7 @@ def GetLog():
         f.close()
 
         if len(ret['log']) > 2 and ('--ALL DONE--' in ret['log'][-1]):
-            resultFilepath = getResultFilePath(ret['log'][-2])
+            resultFilepath = get_result_file_path(ret['log'][-2])
             if resultFilepath == 'No Result':
                 ret['zipfile'] = 'No Result'
             else:
