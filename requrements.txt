@@ -1,0 +1,4 @@
+Flask==0.12.2
+Pillow==5.1.0
+PyVirtualDisplay==0.2.1
+selenium==3.11.0
