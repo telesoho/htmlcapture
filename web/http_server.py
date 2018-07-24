@@ -8,7 +8,7 @@ import re
 import subprocess
 import json
 
-            
+
 web_dir = os.path.dirname(os.path.realpath(__file__))
 root_dir = os.path.join(web_dir, 'dist')
 app = Flask(__name__, root_path=root_dir)
@@ -75,7 +75,7 @@ def GetLog():
                 static_path = os.path.join(web_dir, 'dist', 'static')
                 rel_path = os.path.relpath(resultFilepath, static_path)
                 ret['zipfile'] = url_for('static', filename=rel_path)
-       
+
         return json.dumps(ret)
     else:
         return ''
@@ -100,7 +100,7 @@ def upload():
             output_zip = os.path.join(web_dir, 'dist', 'static', basename + '_result.zip')
             file.save(save_zip)
             cmd = 'python ../runall.py {} {}'.format(save_zip, output_zip)
-            print cmd
+            print(cmd)
             subprocess.Popen([cmd], shell=True)
             return 'Job start'
     return 'NG'
