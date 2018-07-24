@@ -99,7 +99,7 @@ def upload():
             # output_dir = os.path.realpath(output_dir)
             output_zip = os.path.join(web_dir, 'dist', 'static', basename + '_result.zip')
             file.save(save_zip)
-            cmd = 'python ../runall.py {} {}'.format(save_zip, output_zip)
+            cmd = '../.env/bin/python ../runall.py {} {}'.format(save_zip, output_zip)
             print(cmd)
             subprocess.Popen([cmd], shell=True)
             return 'Job start'
